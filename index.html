@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Gurdwara Visitor Guide</title>
+    <style>
+        /* rest and layout body*/
+        * { box-sizing: border-box; font-family: Verdana; margin: 0; padding: 0; }
+        body { background-color: #122e57; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        /* chat window */
+        .chat-container { width: 600px; height: 600px; background: #081427; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; border-top: 8px solid #eb8c00; }
+        .chat-header { background: #eb8c00; color: white; padding: 20px; text-align: center; }
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+        
+        /*messages,and avatar */
+        .bot-msg-wrapper { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; }
+        .bot-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .message { padding: 12px 16px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
+        .bot { background: #233552; color: white; border-top-left-radius: 2px; }
+        .user { background: #eb8c00; color: #081427; align-self: flex-end; max-width: 80%; border-top-right-radius: 2px; }
+        
+        /* formatting bullets */
+        .bot ul { margin: 6px 0 6px 18px !important; padding-left: 0 !important; list-style-type: disc !important; }
+        .bot li { margin-bottom: 4px !important; }
+        
+        /* input area */
+        .input-area { display: flex; padding: 15px; background: #fff; }
+        input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; padding-left: 20px; }
+        button { background: #eb8c00; color: white; border: none; padding: 0 20px; margin-left: 10px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <h1>Gurdwara Assistant</h1>
+        <p style="font-size: 0.85rem; opacity: 0.9;">Learn protocols, history, and etiquette</p>
+    </div>
+    
+    <div class="chat-box" id="chatBox">
+        <div class="bot-msg-wrapper">
+            <img src="static/gurdwaraLogo.png" alt="Bot" class="bot-avatar">
+            <div class="message bot">Sat Sri Akal! Welcome to the Fremont Gurdwara. I'm here to help you learn about Gurdwara etiquette and Sikh history. What would you like to know?</div>
+        </div>
+    </div>
+    
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Ask a question..." onkeypress="if(event.key === 'Enter') sendMessage()">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    async function sendMessage() {
+        const input = document.getElementById('userInput');
+        const chatBox = document.getElementById('chatBox');
+        const text = input.value.trim();
+        if (!text) return; 
+
+        chatBox.innerHTML += `<div class="message user">${text}</div>`;
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight; 
+
+        try {
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: text })
+            });
+            const data = await response.json();
+            
+            const replyText = data.reply ? marked.parse(data.reply) : "Sorry, I had trouble processing that.";
+            
+            chatBox.innerHTML += `
+                <div class="bot-msg-wrapper">
+                    <img src="static/gurdwaraLogo.png" alt="Bot" class="bot-avatar">
+                    <div class="message bot">${replyText}</div>
+                </div>
+            `;
+        } catch (error) {
+            chatBox.innerHTML += `<div class="message bot" style="align-self: flex-start;">Connection error. Please try again.</div>`;
+        }
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
