@@ -6,7 +6,7 @@ app = Flask(__name__, template_folder='.')
 
 HFkey = os.environ.get("API_KEY")
 
-client = InferenceClient(model="https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct", token=HFkey)
+client = InferenceClient(base_url="https://router.huggingface.co/v1", token=HFkey)
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -34,8 +34,9 @@ def ask_bot():
         ]
         
         response = client.chat_completion(
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
             messages=messages,
-            max_tokens=500,
+            max_tokens=300,
             temperature=0.3
         )
         
