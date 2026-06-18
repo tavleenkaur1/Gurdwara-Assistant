@@ -6,8 +6,7 @@ app = Flask(__name__, template_folder='.')
 
 HFkey = os.environ.get("API_KEY")
 
-
-client = InferenceClient(model="meta-llama/Llama-3.3-70B-Instruct", token=HFkey)
+client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct", token=HFkey)
 
 @app.route('/')
 def home():
