@@ -11,7 +11,7 @@
         body { background-color: #122e57; display: flex; justify-content: center; align-items: center; height: 100vh; }
         
         /* chat window */
-        .chat-container { width: 100%; max-width: 600px, height:90vh, max-height: 600px; background: #081427; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; border-top: 8px solid #eb8c00; }
+        .chat-container { width: 100%; max-width: 600px; height:90vh; max-height: 600px; background: #081427; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; border-top: 8px solid #eb8c00; }
         .chat-header { background: #eb8c00; color: white; padding: 20px; text-align: center; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
         
@@ -23,8 +23,9 @@
         .user { background: #eb8c00; color: #081427; align-self: flex-end; max-width: 80%; border-top-right-radius: 2px; }
         
         /* formatting bullets */
-        .bot ul { margin: 6px 0 6px 18px !important; padding-left: 0 !important; list-style-type: disc !important; }
-        .bot li { margin-bottom: 4px !important; }
+        .bot ul, .bot ol { margin: 10px 0 10px 5px !important; padding-left: 0 !important; list-style-type: none !important; display: block !important;}
+        .bot li { display: block !important; margin-bottom: 8px !important; line-height: 1.4; position: relative; padding-left: 20px !important;}
+        .bot li::before {content: "•"; position: absolute; left: 5px; color: #eb8c00;font-weight: bold;}
         
         /* input area */
         .input-area { display: flex; padding: 15px; background: #fff; }
