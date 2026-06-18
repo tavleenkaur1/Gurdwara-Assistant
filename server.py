@@ -34,7 +34,7 @@ def ask_bot():
         ]
         
         response = client.chat_completion(
-            model="meta-llama/Meta-Llama-3-8B-Instruct",
+            model="meta-llama/Llama-3.3-70B-Instruct",
             messages=messages,
             max_tokens=300,
             temperature=0.3
