@@ -6,7 +6,7 @@ app = Flask(__name__, template_folder='.')
 
 HFkey = os.environ.get("API_KEY")
 
-client = InferenceClient(base_url="https://api-inference.huggingface.co/v1", model="meta-llama/Meta-Llama-3-8B-Instruct", token=HFkey)
+client = InferenceClient(model="https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct", token=HFkey)
 @app.route('/')
 def home():
     return render_template('index.html')
