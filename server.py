@@ -1,4 +1,5 @@
 import os
+import requests
 from flask import Flask, request, jsonify, render_template
 from huggingface_hub import InferenceClient
 from supabase import create_client, Client
