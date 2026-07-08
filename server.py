@@ -15,7 +15,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 client = InferenceClient(base_url="https://router.huggingface.co/v1", token=HF_KEY)
 
 def getEmbedding(text):
-    api_url = "https://api.huggingface.co/models/BAAI/bge-small-en-v1.5"
+    api_url = "https://huggingface.co/api/models/BAAI/bge-small-en-v1.5"
     headers = {"Authorization": f"Bearer {HF_KEY}"}
     response = requests.post(api_url, headers=headers, json={"inputs": text})
     embedding = response.json()
