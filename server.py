@@ -1,5 +1,4 @@
 import os
-import requests
 from flask import Flask, request, jsonify, render_template
 from huggingface_hub import InferenceClient
 from supabase import create_client, Client
@@ -10,21 +9,26 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 HF_KEY = os.environ.get("HF_KEY")
 
-
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-client = InferenceClient(base_url="https://router.huggingface.co/v1", token=HF_KEY)
-
+chatClient = InferenceClient(
+    base_url="https://router.huggingface.co/v1",
+    token=HF_KEY,
+)
+embeddingClient = InferenceClient(
+    provider="hf-inference",
+    api_key=HF_KEY,
+)
 def getEmbedding(text):
-    api_url = "https://huggingface.co/api/models/BAAI/bge-small-en-v1.5"
-    headers = {"Authorization": f"Bearer {HF_KEY}"}
-    response = requests.post(api_url, headers=headers, json={"inputs": text})
-    embedding = response.json()
-    
-    if hasattr(embedding, "tolist"):
-        return embedding.tolist()
-    if isinstance(embedding[0], list):
-        return embedding[0]
-    return embedding
+    result = embeddingClient.feature_extraction(
+        text,
+        model="BAAI/bge-small-en-v1.5",
+        normalize=True,
+    )
+    if hasattr(result, "tolist"):
+        result = result.tolist()
+    if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
+        return result[0]
+    return result
 
 @app.route('/')
 def home():
@@ -32,7 +36,7 @@ def home():
 
 @app.route('/ask', methods=['POST'])
 def askBot():
-    data = request.json
+    data = request.get_json(silent=True) or {}
     userQuestion = data.get("question", "")
     
     try:
@@ -75,7 +79,7 @@ def askBot():
             {"role": "user", "content": userQuestion}
         ]
         
-        response = client.chat_completion(
+        response = chatClient.chat_completion(
             model="meta-llama/Llama-3.3-70B-Instruct",
             messages=messages,
             max_tokens=300,
