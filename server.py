@@ -16,7 +16,7 @@ chatClient = InferenceClient(
 )
 embeddingClient = InferenceClient(
     provider="hf-inference",
-    api_key=HF_KEY,
+    token=HF_KEY,
 )
 def getEmbedding(text):
     result = embeddingClient.feature_extraction(
