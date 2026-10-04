@@ -95,7 +95,7 @@
 <div id="welcome-overlay">
     <div class="welcome-card">
         <h1 class="welcome-title">Sat Sri Akal! 🙏</h1>
-        <p class="welcome-subtitle">Welcome to the Fremont Gurdwara Assistant</p>
+        <p class="welcome-subtitle">Welcome to the Fremont Gurdwara Assistant.</p>
         <p class="language-select-text">Please select your preferred language:</p>
         
         <div class="language-buttons">
@@ -127,24 +127,19 @@
 </div>
     
 <script>
-    async function selectLanguage(lang) {
-        // 1. Trigger the fade-out CSS transition on the welcome overlay
+    let currentLanguage = 'English';
+
+    function selectLanguage(lang) {
+        currentLanguage = lang;
+        
         const overlay = document.getElementById('welcome-overlay');
         overlay.classList.add('fade-out');
 
-        // 2. Hide the overlay completely after the 0.6s fade animation finishes
         setTimeout(() => {
             overlay.style.display = 'none';
         }, 600);
-
-        // 3. If a language other than English is picked, automatically send a hidden instruction message
-        if (lang !== 'English') {
-            const input = document.getElementById('userInput');
-            input.value = `I will communicate in ${lang}.`;
-            await sendMessage();
-        }
     }
-    
+
     async function sendMessage() {
         const input = document.getElementById('userInput');
         const chatBox = document.getElementById('chatBox');
@@ -159,7 +154,10 @@
             const response = await fetch('/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question: text })
+                body: JSON.stringify({ 
+                    question: text,
+                    language: currentLanguage 
+                })
             });
             const data = await response.json();
             
