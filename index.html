@@ -116,7 +116,7 @@
     <div class="chat-box" id="chatBox">
         <div class="bot-msg-wrapper">
             <img src="static/gurdwaraLogo.png" alt="Bot" class="bot-avatar">
-            <div class="message bot">Sat Sri Akal! Welcome to the Fremont Gurdwara. I'm here to help you learn about Gurdwara etiquette and Sikh history. What would you like to know? If you prefer to be assisted in a different language such as Hindi, Spanish, or Punjabi, please let me know. </div>
+            <div class="message bot">Sat Sri Akal! Welcome to the Fremont Gurdwara. I'm here to help you learn about Gurdwara etiquette and Sikh history. What would you like to know? </div>
         </div>
     </div>
     
@@ -129,9 +129,19 @@
 <script>
     let currentLanguage = 'English';
 
+    const greetings = {
+    'English': "Sat Sri Akal! Welcome to the Fremont Gurdwara. I'm here to help you learn about Gurdwara etiquette and Sikh history. What would you like to know?",
+    'Punjabi': "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਫ੍ਰੀਮੌਂਟ ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ। ਮੈਂ ਇੱਥੇ ਗੁਰਦੁਆਰੇ ਮਰਿਆਦਾ ਅਤੇ ਸਿੱਖ ਇਤਿਹਾਸ ਬਾਰੇ ਜਾਣਕਾਰੀ ਦੇਣ ਲਈ ਹਾਂ। ਤੁਸੀਂ ਕੀ ਜਾਨਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    'Hindi': "सत श्री अकाल! फ्रीमोंट गुरुद्वारे में आपका स्वागत है। मैं यहाँ गुरुद्वारा मर्यादा और सिख इतिहास के बारे में मार्गदर्शन करने के लिए हूँ। आप क्या जानना चाहते हैं?",
+    'Spanish': "¡Sat Sri Akal! Bienvenido al Gurdwara de Fremont. Estoy aquí para ayudarte a aprender sobre la etiqueta del Gurdwara y la historia sij. ¿Qué te gustaría saber?"
+    };
+    
     function selectLanguage(lang) {
         currentLanguage = lang;
-        
+        const initialMsgElement = document.querySelector('.bot-msg-wrapper .message.bot');
+        if (initialMsgElement && greetings[lang]) {
+            initialMsgElement.textContent = greetings[lang];
+        }
         const overlay = document.getElementById('welcome-overlay');
         overlay.classList.add('fade-out');
 
