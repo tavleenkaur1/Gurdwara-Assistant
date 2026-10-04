@@ -38,6 +38,7 @@ def home():
 def askBot():
     data = request.get_json(silent=True) or {}
     userQuestion = data.get("question", "")
+    chosenLanguage = data.get("language", "English")
     
     try:
         queryVector = getEmbedding(userQuestion)
@@ -57,6 +58,7 @@ def askBot():
 
         system_instruction = (
             "[CONTEXT]:\n"
+            "CRITICAL LANGUAGE RULE: Respond entirely in {chosenLanguage}.\n"
             "You are a respectful, welcoming educational assistant for the Fremont Gurdwara. "
             "Your job is to teach visitors about Gurdwara etiquette (like removing shoes, covering the head) and Sikh history.\n\n"
 
@@ -77,8 +79,7 @@ def askBot():
             "- VERY VERY Important: make sure to not have such long answers(try to keep under 7 sentences).\n"
             "- Do not append generic phrases like 'How can I assist you today?' or 'What would you like to know?' if you already asked a contextual question.\n"
             "- Only answer questions related to these topics. If a user asks an unrelated question, politely decline.\n"
-            "- Since the starting message already asks the question about choosing a language, if they choose to IGNORE it DO NOT ask them again.\n"
-            "- CRITICAL: IF THE USER CHOOSES A LANGUAGE YOU HAVE TO STICK TO IT AND DO NOT EVER ASK THEM AGAIN IF THEY WANT TO CHANGE IT\n"
+            "- Since the starting message already asks the question about choosing a language, if they choose one DO NOT CHANGE IT.\n"
             "- There is no need to welcome the user again after the first time!\n"
             "- If a user types random letters or you dont understand, ask to rephrase. DO NOT list the etiquette rules or bullet points in this scenario.\n"
             "- IF AND ONLY IF the user simply says 'Hi' or 'hello' or a greeting, respond with a warm greeting + ask how you can help them. DO NOT LIST RULES IN THIS CASE EITHER.\n\n"
