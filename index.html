@@ -66,12 +66,47 @@
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        
         /* chat window */
         .chat-container { width: 100%; max-width: 600px; height:90vh; max-height: 600px; background: #081427; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; border-top: 8px solid #eb8c00; }
         .chat-header { background: #eb8c00; color: white; padding: 20px; text-align: center; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+
+        /* Quick Suggestion Chips Styling */
+        .chips-container {
+            display: flex;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #081427;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-top: 1px solid #1f2d42;
+        }
         
+        .chips-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .chips-container::-webkit-scrollbar-thumb {
+            background: #eb8c00;
+            border-radius: 10px;
+        }
+        
+        .chip-btn {
+            background: #233552;
+            color: #ffffff;
+            border: 1px solid #eb8c00;
+            padding: 6px 14px;
+            border-radius: 18px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .chip-btn:hover {
+            background: #eb8c00;
+            color: #081427;
+        }
         /*messages,and avatar */
         .bot-msg-wrapper { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; }
         .bot-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
@@ -120,6 +155,13 @@
         </div>
     </div>
     
+    <div class="chips-container">
+        <button class="chip-btn" onclick="handleChip('Shoe & Head Etiquette')">Shoe & Head Etiquette</button>
+        <button class="chip-btn" onclick="handleChip('Langar Info')">Langar Info</button>
+        <button class="chip-btn" onclick="handleChip('Temple Hours')">Temple Hours</button>
+        <button class="chip-btn" onclick="handleChip('Parking Info')">Parking Info</button>
+    </div>
+    
     <div class="input-area">
         <input type="text" id="userInput" placeholder="Ask a question..." onkeypress="if(event.key === 'Enter') sendMessage()">
         <button onclick="sendMessage()">Send</button>
@@ -135,6 +177,12 @@
     'Hindi': "सत श्री अकाल! फ्रीमोंट गुरुद्वारे में आपका स्वागत है। मैं यहाँ गुरुद्वारा मर्यादा और सिख इतिहास के बारे में मार्गदर्शन करने के लिए हूँ। आप क्या जानना चाहते हैं?",
     'Spanish': "¡Sat Sri Akal! Bienvenido al Gurdwara de Fremont. Estoy aquí para ayudarte a aprender sobre la etiqueta del Gurdwara y la historia sij. ¿Qué te gustaría saber?"
     };
+    const chipLabels = {
+    'English': ['Shoe & Head Etiquette', 'Langar Info', 'Temple Hours', 'Parking Info'],
+    'Punjabi': ['ਜੋੜਾ ਅਤੇ ਸਿਰ ਢੱਕਣ ਦੀ ਮਰਿਆਦਾ', 'ਲੰਗਰ ਜਾਣਕਾਰੀ', 'ਗੁਰਦੁਆਰਾ ਸਮਾਂ', 'ਪਾਰਕਿੰਗ ਜਾਣਕਾਰੀ'],
+    'Hindi': ['जूते और सिर ढकने के नियम', 'लंगर जानकारी', 'समय सारणी', 'पार्किंग जानकारी'],
+    'Spanish': ['Etiqueta de Zapatos y Cabeza', 'Información de Langar', 'Horarios', 'Estacionamiento']
+    };
     
     function selectLanguage(lang) {
         currentLanguage = lang;
@@ -142,6 +190,15 @@
         if (initialMsgElement && greetings[lang]) {
             initialMsgElement.textContent = greetings[lang];
         }
+        const chipButtons = document.querySelectorAll('.chip-btn');
+        const labels = chipLabels[lang] || chipLabels['English'];
+        const keys = chipLabels['English']; 
+
+        chipButtons.forEach((btn, index) => {
+        btn.textContent = labels[index];
+        btn.setAttribute('onclick', `handleChip('${keys[index]}', '${labels[index]}')`);
+        });
+        
         const overlay = document.getElementById('welcome-overlay');
         overlay.classList.add('fade-out');
 
@@ -150,6 +207,57 @@
         }, 600);
     }
 
+    const storedAnswers = {
+        'English': {
+                'Shoe & Head Etiquette': "Before entering the Gurdwara:\n\n• Remove your shoes and place them in the shoe room.\n• Wash your hands and feet at the designated washing stations.\n• Cover your head with a headscarf (rumāl) or bandana, which are available at the entrance.\n\nEnjoy your peaceful visit!",
+                'Langar Info': "Langar is a free community meal served to everyone regardless of religion, background, or identity.\n\n• It is served daily in the Langar Hall.\n• Everyone sits together on the floor as equals.\n• All food served is vegetarian.",
+                'Temple Hours': "Fremont Gurdwara is generally open daily from early morning (around 4:00 AM) until late evening (around 9:00 PM) for prayers, Darbar Sahib worship, and Langar.",
+                'Parking Info': "Free parking is available in the main Fremont Gurdwara parking lot. Please follow posted parking signs and avoid blocking emergency access lanes."
+            },
+            'Punjabi': {
+                'Shoe & Head Etiquette': "ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਵਿੱਚ ਪ੍ਰਵੇਸ਼ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ:\n\n• ਆਪਣੇ ਜੁੱਤੇ ਜੋੜਾ ਘਰ ਵਿੱਚ ਉਤਾਰੋ।\n• ਹੱਥ-ਪੈਰ ਧੋਵੋ।\n• ਆਪਣਾ ਸਿਰ ਰੁਮਾਲ ਜਾਂ ਪਟਕੇ ਨਾਲ ਢੱਕੋ।",
+                'Langar Info': "ਲੰਗਰ ਸਭ ਲਈ ਮੁਫ਼ਤ ਹੈ। ਇਹ ਰੋਜ਼ਾਨਾ ਲੰਗਰ ਹਾਲ ਵਿੱਚ ਵਰਤਾਇਆ ਜਾਂਦਾ ਹੈ ਅਤੇ ਸਾਰੇ ਜ਼ਮੀਨ 'ਤੇ ਇਕੱਠੇ ਬੈਠਦੇ ਹਨ।",
+                'Temple Hours': "ਫ੍ਰੀਮੌਂਟ ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਰੋਜ਼ਾਨਾ ਅੰਮ੍ਰਿਤ ਵੇਲੇ (ਸਵੇਰੇ 4 ਵਜੇ) ਤੋਂ ਰਾਤ 9 ਵਜੇ ਤੱਕ ਖੁੱਲ੍ਹਾ ਰਹਿੰਦਾ ਹੈ।",
+                'Parking Info': "ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਦੀ ਮੁੱਖ ਪਾਰਕਿੰਗ ਲਾਟ ਵਿੱਚ ਮੁਫ਼ਤ ਪਾਰਕਿੰਗ ਉਪਲਬਧ ਹੈ।"
+            },
+            'Hindi': {
+                'Shoe & Head Etiquette': "गुरुद्वारा साहिब में प्रवेश करने से पहले:\n\n• अपने जूते जोड़ घर में उतारें।\n• हाथ और पैर धोएं।\n• सिर को रुमाल या कपड़े से ढकें।",
+                'Langar Info': "लंगर सभी के लिए एक मुफ्त सामुदायिक भोजन है।\n\n• यह रोजाना लंगर हॉल में परोसा जाता है।\n• सभी लोग जमीन पर एक साथ बैठकर भोजन करते हैं।\n• सभी भोजन पूरी तरह से शाकाहारी होता है।",
+                'Temple Hours': "फ्रीमोंट गुरुद्वारा साहिब सुबह 4:00 बजे से रात 9:00 बजे तक दर्शन और लंगर के लिए खुला रहता है।",
+                'Parking Info': "फ्रीमोंट गुरुद्वारा साहिब के मुख्य पार्किंग स्थल में मुफ्त पार्किंग उपलब्ध है।"
+            },
+            'Spanish': {
+                'Shoe & Head Etiquette': "Antes de entrar al Gurdwara:\n\n• Quítese los zapatos y colóquelos en la sala de zapatos.\n• Lávese las manos y los pies en las estaciones designadas.\n• Cúbrase la cabeza con un pañuelo, disponible en la entrada.",
+                'Langar Info': "El Langar es una comida comunitaria gratuita servida a todos sin distinción.\n\n• Se sirve a diario en el salón Langar.\n• Todos se sientan juntos en el suelo como iguales.\n• Toda la comida es vegetariana.",
+                'Temple Hours': "El Fremont Gurdwara está abierto todos los días desde las 4:00 AM hasta las 9:00 PM.",
+                'Parking Info': "Estacionamiento gratuito disponible en el estacionamiento principal del Fremont Gurdwara."
+            }
+    };
+
+    function handleChip(topicKey, displayLabel) {
+        const chatBox = document.getElementById('chatBox');
+        
+        const userText = displayLabel || topicKey;
+        chatBox.innerHTML += `<div class="message user">${userText}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    
+        const langAnswers = storedAnswers[currentLanguage] || storedAnswers['English'];
+        const fastReply = langAnswers[topicKey];
+    
+        if (fastReply) {
+            const replyText = marked.parse(fastReply);
+            chatBox.innerHTML += `
+                <div class="bot-msg-wrapper">
+                    <img src="static/gurdwaraLogo.png" alt="Bot" class="bot-avatar">
+                    <div class="message bot">${replyText}</div>
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } else {
+            document.getElementById('userInput').value = userText;
+            sendMessage();
+        }
+    }
     async function sendMessage() {
         const input = document.getElementById('userInput');
         const chatBox = document.getElementById('chatBox');
